@@ -230,6 +230,19 @@ export function MovieReels() {
           (movie, index, self) => index === self.findIndex((m) => m.id === movie.id),
         )
 
+        const movieTrailerUrls = [
+          "https://www.youtube.com/embed/yKOLBZEv0Gk",
+          "https://www.youtube.com/embed/xuJEYdOFEP4",
+          "https://www.youtube.com/embed/9FnO3igOkOk",
+          "https://www.youtube.com/embed/WDpipB4yehk",
+          "https://www.youtube.com/embed/0jNvJU52LvU",
+          "https://www.youtube.com/embed/5cOJbYiQjls",
+          "https://www.youtube.com/embed/xaPepCVepCg",
+          "https://www.youtube.com/embed/GQ5ICXMC4xY",
+          "https://www.youtube.com/embed/Xn1PkyP4q80",
+          "https://www.youtube.com/embed/8CkRl7E8gJc",
+        ]
+
         const newReels = uniqueMovies.slice(0, 10).map((movie, index) => ({
           id: movie.id + 1000,
           title: `${movie.title} - Epic Scene`,
@@ -239,7 +252,7 @@ export function MovieReels() {
             .toString()
             .padStart(2, "0")}`,
           thumbnail: tmdbApi.getBackdropUrl(movie.backdrop_path),
-          videoUrl: "",
+          videoUrl: movieTrailerUrls[index % movieTrailerUrls.length],
           mood: ["Epic", "Dramatic", "Thrilling", "Emotional", "Action"][Math.floor(Math.random() * 5)],
           genre: "Drama",
           rating: Math.round(movie.vote_average * 10) / 10,
@@ -474,7 +487,7 @@ export function MovieReels() {
           <div key={reel.id} className="relative w-full h-screen snap-start flex-shrink-0">
             {/* Background Video/Image */}
             <div className="absolute inset-0">
-              {reel.videoUrl ? (
+              {reel.videoUrl && reel.videoUrl.includes("youtube") ? (
                 <iframe
                   src={`${reel.videoUrl}?autoplay=1&mute=${isMuted ? 1 : 0}&controls=0&loop=1&playlist=${reel.videoUrl
                     .split("/")
@@ -485,11 +498,19 @@ export function MovieReels() {
                   style={{ border: "none" }}
                 />
               ) : (
-                <img
-                  src={reel.thumbnail || "/placeholder.svg"}
-                  alt={reel.title}
-                  className="w-full h-full object-cover"
-                />
+                <div className="w-full h-full bg-gradient-to-br from-slate-900 to-slate-800 relative">
+                  <img
+                    src={reel.thumbnail || "/placeholder.svg"}
+                    alt={reel.title}
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Play button overlay when image is shown */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-colors">
+                    <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                      <Play className="h-12 w-12 text-white ml-1" />
+                    </div>
+                  </div>
+                </div>
               )}
 
               {/* Gradient Overlays */}
